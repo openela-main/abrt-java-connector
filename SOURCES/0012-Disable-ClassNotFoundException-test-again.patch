@@ -1,0 +1,59 @@
+From 9acaea3944d8f6d64040302b523c8160fd15bcd7 Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Wed, 29 Jul 2015 18:49:58 +0200
+Subject: [PATCH] Disable ClassNotFoundException test again
+
+java-1.8.0-openjdk started catching the ClassNotFoundException and
+has the same behaviour as java-1.7.0-openjdk now.
+---
+ test/CMakeLists.txt | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
+
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 291e9a1..6c2a3f8 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -187,23 +187,25 @@ _add_test_target(
+ _add_test(run_bad_class 2)
+ 
+ # Disable for JVM-1.7, because it catches the ClassNotFoundException in a native method and exits gracefully
+-_add_test_target(
+-    run_missing_class_test
+-    MissingClassTest
+-    PRE rm -f MissingClassTest.class
+-    DEPENDS ${TEST_JAVA_TARGETS} ${JAR_TEST_PATH}
+-    AGENT_OPTIONS executable=threadclass
+-)
+-_add_test(run_missing_class_test 2)
+-
+-# Disable for JVM-1.8, because missing class causes an uncaught exception
+-#add_custom_target(
++# 2015-07-29: Disable for JVM-1.8, because java started catching the exception in a native method again
++#_add_test_target(
+ #    run_missing_class_test
+-#    COMMAND rm -f MissingClassTest.class && LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src ${Java_JAVA_EXECUTABLE} -agentlib:${AGENT_NAME}=output=run_missing_class.log MissingClassTest || test ! -e run_missing_class.log
+-#    DEPENDS AbrtChecker ${TEST_JAVA_TARGETS}
+-#    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
++#    MissingClassTest
++#    PRE rm -f MissingClassTest.class
++#    DEPENDS ${TEST_JAVA_TARGETS} ${JAR_TEST_PATH}
++#    AGENT_OPTIONS executable=threadclass
+ #)
+-#add_test(test_run_missing_class_test make run_missing_class_test)
++#_add_test(run_missing_class_test 2)
++
++# Disable for JVM-1.8, because missing class causes an uncaught exception
++# 2015-07-29: Enable for all versions, because this error has stopped causing an uncaught exception with JVM-1.8
++add_custom_target(
++    run_missing_class_test
++    COMMAND rm -f MissingClassTest.class && LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src ${Java_JAVA_EXECUTABLE} -agentlib:${AGENT_NAME}=output=run_missing_class.log MissingClassTest || test ! -e run_missing_class.log
++    DEPENDS AbrtChecker ${TEST_JAVA_TARGETS}
++    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
++)
++add_test(test_run_missing_class_test make run_missing_class_test)
+ 
+ _add_test_target(
+     run_try_finally
+-- 
+2.4.6
+

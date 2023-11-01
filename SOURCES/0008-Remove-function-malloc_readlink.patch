@@ -1,0 +1,52 @@
+From f5f7f625ff489bf0e68f4b99503188b7006807ce Mon Sep 17 00:00:00 2001
+From: Matej Habrnal <mhabrnal@redhat.com>
+Date: Fri, 13 Mar 2015 16:11:01 +0100
+Subject: [PATCH] Remove function malloc_readlink
+
+The same function was added to the libreport so there was a conflict between
+them.
+
+Related to #1185626
+
+Signed-off-by: Matej Habrnal <mhabrnal@redhat.com>
+---
+ src/abrt-checker.c | 23 -----------------------
+ 1 file changed, 23 deletions(-)
+
+diff --git a/src/abrt-checker.c b/src/abrt-checker.c
+index 56f2fa4..4e1a450 100644
+--- a/src/abrt-checker.c
++++ b/src/abrt-checker.c
+@@ -1039,29 +1039,6 @@ static void get_thread_name(
+ }
+ 
+ 
+-/*
+- * Read executable name from link /proc/${PID}/exe
+- */
+-static char* malloc_readlink(const char *linkname)
+-{
+-    char buf[PATH_MAX + 1];
+-    int len;
+-
+-    len = readlink(linkname, buf, sizeof(buf)-1);
+-    if (len >= 0)
+-    {
+-        buf[len] = '\0';
+-        char *p = malloc(strlen(buf) + 1);
+-        if (p)
+-        {
+-            strcpy(p, buf);
+-        }
+-        return p;
+-    }
+-    return NULL;
+-}
+-
+-
+ 
+ /*
+  * Read executable name from the special file /proc/${PID}/exe
+-- 
+2.4.6
+

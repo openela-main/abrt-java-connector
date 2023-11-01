@@ -1,0 +1,37 @@
+From ae2144f1674f163517f0aa18b5f1b4784c143572 Mon Sep 17 00:00:00 2001
+From: Ernestas Kulik <ekulik@redhat.com>
+Date: Fri, 19 Jul 2019 15:24:17 +0200
+Subject: [PATCH] abrt-checker: Fix preprocessor check
+
+The macro defined is HAVE_SYSTEMD, not HAVE_SYSTEMD_JOURNAL.
+
+Signed-off-by: Ernestas Kulik <ekulik@redhat.com>
+---
+ src/abrt-checker.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/abrt-checker.c b/src/abrt-checker.c
+index 6f7fe13..2a0fac2 100644
+--- a/src/abrt-checker.c
++++ b/src/abrt-checker.c
+@@ -41,7 +41,7 @@
+ #include <errno.h>
+ #include <syslog.h>
+ 
+-#if HAVE_SYSTEMD_JOURNAL
++#if HAVE_SYSTEMD
+ #include <systemd/sd-journal.h>
+ #endif
+ 
+@@ -802,7 +802,7 @@ static void report_stacktrace(
+         syslog(LOG_ERR, "%s\n%s", message, stacktrace);
+     }
+ 
+-#if HAVE_SYSTEMD_JOURNAL
++#if HAVE_SYSTEMD
+     if (globalConfig.reportErrosTo & ED_JOURNALD)
+     {
+         VERBOSE_PRINT("Reporting stack trace to JournalD\n");
+-- 
+2.21.0
+

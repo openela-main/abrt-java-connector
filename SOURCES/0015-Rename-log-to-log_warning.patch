@@ -1,0 +1,27 @@
+From 60e6835ed01fd9dce9704aeb286157f920e301cb Mon Sep 17 00:00:00 2001
+From: Matej Habrnal <mhabrnal@redhat.com>
+Date: Thu, 24 Aug 2017 10:57:31 +0200
+Subject: [PATCH] Rename log() to log_warning()
+
+Reanming log() function for logging in libreport because
+of confilict with log() function from math.h.
+---
+ utils/abrt-action-analyze-java.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/utils/abrt-action-analyze-java.c b/utils/abrt-action-analyze-java.c
+index 285da8f..fdd4d51 100644
+--- a/utils/abrt-action-analyze-java.c
++++ b/utils/abrt-action-analyze-java.c
+@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
+     {
+         hash_str = sr_thread_get_duphash(crash_thread, FRAMES_FOR_DUPHASH,
+                 /*noprefix*/NULL, SR_DUPHASH_NOHASH);
+-        log("Generating duphash from string: '%s'", hash_str);
++        log_warning("Generating duphash from string: '%s'", hash_str);
+         free(hash_str);
+     }
+ 
+-- 
+2.13.3
+
