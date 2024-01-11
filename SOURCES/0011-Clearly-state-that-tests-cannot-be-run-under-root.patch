@@ -1,0 +1,36 @@
+From 81a744f1b18475221feaffc8da120628a4ab5da4 Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Mon, 13 Jul 2015 15:36:20 +0200
+Subject: [PATCH] Clearly state that tests cannot be run under root
+
+Signed-off-by: Jakub Filak <jfilak@redhat.com>
+---
+ Makefile | 2 +-
+ README   | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 8802256..15df319 100644
+--- a/Makefile
++++ b/Makefile
+@@ -67,4 +67,4 @@ distclean:
+ 
+ .PHONY: check
+ check: build
+-	cd $(OUT_DIR) && make test
++	if [ "_0" != "_$$(id -u)" ]; then cd $(OUT_DIR) && make test; else echo "Cannot run tests under root user."; exit 1; fi
+diff --git a/README b/README
+index 2657b11..30d0bef 100644
+--- a/README
++++ b/README
+@@ -141,3 +141,7 @@ $ make rpm
+ $ make distclean
+ 
+ All build results are stored in ./bin directory.
++
++The `check' make target will fail if you run it under root user. There are some
++test cases that try to generate 'File Access Denied' exceptions and the easiest
++way to achieve that is to try to access a root's file.
+-- 
+2.4.6
+

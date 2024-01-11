@@ -1,0 +1,31 @@
+From cde55c7b8e2bc35c1eb38dd96dc1606d1adbff2b Mon Sep 17 00:00:00 2001
+From: Matej Habrnal <mhabrnal@redhat.com>
+Date: Fri, 13 Mar 2015 16:17:25 +0100
+Subject: [PATCH] Makefile: Adds srpm target
+
+Signed-off-by: Matej Habrnal <mhabrnal@redhat.com>
+---
+ Makefile | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 2e20217..8802256 100644
+--- a/Makefile
++++ b/Makefile
+@@ -46,6 +46,13 @@ rpm: dist
+ 		$(PKG_DIR)/abrt-java-connector.spec > $(OUT_DIR)/abrt-java-connector.spec && \
+ 	rpmbuild $(RPM_DIRS) $(RPM_FLAGS) -ba $(OUT_DIR)/abrt-java-connector.spec
+ 
++.PHONY: srpm
++srpm: dist
++	sed -e 's/global commit .*$$/global commit '"$$(git log -1 --format=%H)"'/' \
++		-e 's/%{?dist}/.'"$$(git log -1 --format=%h)%{?dist}"'/' \
++		$(PKG_DIR)/abrt-java-connector.spec > $(OUT_DIR)/abrt-java-connector.spec && \
++	rpmbuild $(RPM_DIRS) $(RPM_FLAGS) -bs $(OUT_DIR)/abrt-java-connector.spec
++
+ # Make sure the output dir is created
+ $(OUT_DIR):
+ 	mkdir -p $@ && cd $@ && cmake $$CMAKE_OPTS ../
+-- 
+2.4.6
+

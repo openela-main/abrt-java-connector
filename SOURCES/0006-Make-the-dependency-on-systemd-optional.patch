@@ -1,0 +1,85 @@
+From e078503fcd9f74ccdd7e6c50c45e5e715f2dcda8 Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Wed, 4 Feb 2015 06:30:25 +0100
+Subject: [PATCH] Make the dependency on systemd optional
+
+Closes #44
+
+Signed-off-by: Jakub Filak <jfilak@redhat.com>
+---
+ src/CMakeLists.txt | 16 +++++++++++++---
+ src/abrt-checker.c |  7 ++++++-
+ 2 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index a178dcd..1d31602 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,10 +1,17 @@
+ find_package(JNI REQUIRED)
+ include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+ 
+-pkg_check_modules(PC_JOURNALD REQUIRED libsystemd-journal)
+ include_directories(${PC_LIBREPORT_INCLUDE_DIRS})
+ include_directories(${PC_ABRT_INCLUDE_DIRS})
+-include_directories(${PC_JOURNALD_INCLUDE_DIRS})
++
++pkg_check_modules(PC_JOURNALD libsystemd-journal)
++
++if (PC_JOURNALD_FOUND)
++    include_directories(${PC_JOURNALD_INCLUDE_DIRS})
++    add_definitions(-DHAVE_SYSTEMD=1)
++else()
++    add_definitions(-DHAVE_SYSTEMD=0)
++endif (PC_JOURNALD_FOUND)
+ 
+ set(AbrtChecker_SRCS configuration.c abrt-checker.c
+         jthrowable_circular_buf.c jthread_map.c)
+@@ -19,6 +26,9 @@ set_target_properties(
+ 
+ target_link_libraries(AbrtChecker ${PC_LIBREPORT_LIBRARIES})
+ target_link_libraries(AbrtChecker ${PC_ABRT_LIBRARIES})
+-target_link_libraries(AbrtChecker ${PC_JOURNALD_LIBRARIES})
++
++if (PC_JOURNALD_FOUND)
++    target_link_libraries(AbrtChecker ${PC_JOURNALD_LIBRARIES})
++endif (PC_JOURNALD_FOUND)
+ 
+ install(TARGETS AbrtChecker DESTINATION ${JNIAGENTLIB_INSTALL_DIR})
+diff --git a/src/abrt-checker.c b/src/abrt-checker.c
+index 930e485..56f2fa4 100644
+--- a/src/abrt-checker.c
++++ b/src/abrt-checker.c
+@@ -39,9 +39,12 @@
+ #include <linux/limits.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+-#include <systemd/sd-journal.h>
+ #include <syslog.h>
+ 
++#if HAVE_SYSTEMD_JOURNAL
++#include <systemd/sd-journal.h>
++#endif
++
+ /* Shared macros and so on */
+ #include "abrt-checker.h"
+ 
+@@ -689,6 +692,7 @@ static void report_stacktrace(
+         syslog(LOG_ERR, "%s\n%s", message, stacktrace);
+     }
+ 
++#if HAVE_SYSTEMD_JOURNAL
+     if (globalConfig.reportErrosTo & ED_JOURNALD)
+     {
+         VERBOSE_PRINT("Reporting stack trace to JournalD\n");
+@@ -698,6 +702,7 @@ static void report_stacktrace(
+                         NULL);
+ 
+     }
++#endif
+ 
+     log_print("%s\n", message);
+ 
+-- 
+2.4.6
+

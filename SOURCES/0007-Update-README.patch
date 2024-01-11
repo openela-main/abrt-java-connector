@@ -1,0 +1,35 @@
+From 64b07c73452ed3b0d0d4e978fad61940ae12d362 Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Wed, 11 Mar 2015 13:21:43 +0100
+Subject: [PATCH] Update README
+
+---
+ README | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/README b/README
+index a8dbf2e..2657b11 100644
+--- a/README
++++ b/README
+@@ -126,3 +126,18 @@ Example7:
+ 
+ 
+ $  java -agentlib:abrt-java-connector=conffile=/etc/foo/example.conf $MyClass
++
++
++Building from sources
++---------------------
++
++This project uses CMake build system but a Makefile for GNU Make, which defines
++all the targets you usually need to run, is also provided.
++
++$ make build
++$ make run
++$ make check
++$ make rpm
++$ make distclean
++
++All build results are stored in ./bin directory.
+-- 
+2.4.6
+

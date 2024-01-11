@@ -1,0 +1,29 @@
+From b465f6b6a9587fb2387d3e880227e936d6ba5d3b Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Mon, 15 Feb 2016 07:18:19 +0100
+Subject: [PATCH] Drop pedantic from CFLAGS
+
+GLib2 headers produces some warnings with this option and the option
+cannot be disable through pargma.
+
+Signed-off-by: Jakub Filak <jfilak@redhat.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e766995..6af7886 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -78,7 +78,7 @@ pkg_check_modules(PC_ABRT REQUIRED abrt)
+ add_definitions(-D_GNU_SOURCE)
+ set(AJC_ENABLE_NLS true)
+ 
+-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c99 -pedantic")
++set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c99")
+ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -DVERBOSE")
+ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Werror -DSILENT")
+ 
+-- 
+2.7.1
+

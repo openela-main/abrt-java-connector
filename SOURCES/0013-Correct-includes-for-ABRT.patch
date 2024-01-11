@@ -1,0 +1,39 @@
+From c8951a1173327241be8d518b317498b25241b5af Mon Sep 17 00:00:00 2001
+From: Jakub Filak <jfilak@redhat.com>
+Date: Mon, 15 Feb 2016 07:16:02 +0100
+Subject: [PATCH] Correct includes for ABRT
+
+The libabrt.h file includes all libreport include files and the file
+belongs to ABRT.
+
+"-pedantic" cannot be disabled through pragma any more.
+
+Signed-off-by: Jakub Filak <jfilak@redhat.com>
+---
+ src/internal_libabrt.h | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/src/internal_libabrt.h b/src/internal_libabrt.h
+index e40d642..527a90c 100644
+--- a/src/internal_libabrt.h
++++ b/src/internal_libabrt.h
+@@ -22,15 +22,7 @@
+  * Wrapper header for all ABRT includes
+  */
+ 
+-/* libreport include file */
+-#pragma GCC diagnostic push
+-#pragma GCC diagnostic ignored "-pedantic"
++/* abrt include files */
+ #include <libabrt.h>
+-#include <internal_libreport.h>
+-#pragma GCC diagnostic pop
+-
+-#include <problem_data.h>
+-
+-/* ABRT is not necessary now */
+ 
+ #endif /* __INTERNAL_LIBABRT_H */
+-- 
+2.7.1
+
